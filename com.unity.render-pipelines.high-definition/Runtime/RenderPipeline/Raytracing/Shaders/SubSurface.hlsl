@@ -9,6 +9,7 @@ struct ScatteringResult
     bool hit;
     float3 outputPosition;
     float3 outputNormal;
+    float3 outputDirection;
     float3 outputDiffuse;
     float3 outputThroughput;
 };
@@ -150,8 +151,11 @@ void ScatteringWalk(float3 normalWS, float3 diffuseColor, float3 subSurfaceColor
     if (!scatteringResult.hit)
         scatteringResult.outputThroughput = float3(0.0, 0.0, 0.0);
     else
+    {
         scatteringResult.outputPosition = currentPathPosition;
+        scatteringResult.outputDirection = internalRayDesc.Direction;
         scatteringResult.outputDiffuse = internalRayIntersection.outIndirectDiffuse;
+    }
 }
 
 #endif // UNITY_SUB_SURFACE_INCLUDED
