@@ -225,6 +225,13 @@ void ClosestHit(inout PathIntersection pathIntersection : SV_RayPayload, Attribu
     pathIntersection.value = (!currentDepth || computeDirect) ? bsdfData.color * GetInverseCurrentExposureMultiplier() + builtinData.emissiveColor : 0.0;
 #endif
 
+    if (_FogEnabled)
+    {
+        float fogTransmittance = TransmittanceHeightFog(_HeightFogBaseExtinction, _HeightFogBaseHeight, _HeightFogExponents,
+                                                        WorldRayDirection().y, WorldRayOrigin().y, pathIntersection.t);
+        pathIntersection.value = lerp(_FogColor, pathIntersection.value, fogTransmittance);
+    }
+
     if (currentDepth)
     {
         // Bias the result (making it too dark), but reduces fireflies a lot
