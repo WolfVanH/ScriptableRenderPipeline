@@ -6,7 +6,6 @@
 
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Common.hlsl"
 #include "Packages/com.unity.render-pipelines.core/ShaderLibrary/Color.hlsl"
-#include "Packages/com.unity.render-pipelines.core/ShaderLibrary/VolumeRendering.hlsl"
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/ShaderLibrary/ShaderVariables.hlsl"
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/Material/Builtin/BuiltinData.hlsl"
 
@@ -16,6 +15,7 @@
 // Path tracing includes
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/PathTracing/Shaders/PathTracingIntersection.hlsl"
 #include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/PathTracing/Shaders/PathTracingSampling.hlsl"
+#include "Packages/com.unity.render-pipelines.high-definition/Runtime/RenderPipeline/PathTracing/Shaders/PathTracingVolume.hlsl"
 
 // Input(s)
 float4x4 _PixelCoordToViewDirWS;
@@ -58,12 +58,7 @@ void MissCamera(inout PathIntersection pathIntersection : SV_RayPayload)
     pathIntersection.value = _EnvLightSkyEnabled && _RaytracingCameraSkyEnabled ?
         SAMPLE_TEXTURECUBE_ARRAY_LOD(_SkyTexture, s_trilinear_clamp_sampler, WorldRayDirection(), 0.0, 0) : _RaytracingCameraClearColor * GetInverseCurrentExposureMultiplier();
 
-    if (_FogEnabled)
-    {
-        float fogTransmittance = TransmittanceHeightFog(_HeightFogBaseExtinction, _HeightFogBaseHeight, _HeightFogExponents,
-                                                        WorldRayDirection().y, WorldRayOrigin().y);
-        pathIntersection.value = lerp(_FogColor, pathIntersection.value, fogTransmittance);
-    }
+    ApplyFogAttenuation(WorldRayOrigin(), WorldRayDirection(), pathIntersection.value);
 }
 
 [shader("miss")]
@@ -77,12 +72,7 @@ void MissMaterial(inout PathIntersection pathIntersection : SV_RayPayload)
     pathIntersection.value = _EnvLightSkyEnabled && (_RaytracingMaxRecursion - pathIntersection.remainingDepth) >= _RaytracingMinRecursion ?
         SAMPLE_TEXTURECUBE_ARRAY_LOD(_SkyTexture, s_trilinear_clamp_sampler, WorldRayDirection(), 0.0, 0) : 0.0;
 
-    if (_FogEnabled)
-    {
-        float fogTransmittance = TransmittanceHeightFog(_HeightFogBaseExtinction, _HeightFogBaseHeight, _HeightFogExponents,
-                                                        WorldRayDirection().y, WorldRayOrigin().y);
-        pathIntersection.value = lerp(_FogColor, pathIntersection.value, fogTransmittance);
-    }
+    ApplyFogAttenuation(WorldRayOrigin(), WorldRayDirection(), pathIntersection.value);
 }
 
 [shader("raygeneration")]

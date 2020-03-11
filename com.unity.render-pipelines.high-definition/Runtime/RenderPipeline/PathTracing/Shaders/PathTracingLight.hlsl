@@ -1,3 +1,6 @@
+#ifndef UNITY_PATH_TRACING_LIGHT_INCLUDED
+#define UNITY_PATH_TRACING_LIGHT_INCLUDED
+
 // How many lights (at most) do we support at one given shading point
 // FIXME: hardcoded limits are evil, this LightList should instead be put together in C#
 #define MAX_LOCAL_LIGHT_COUNT 16
@@ -198,12 +201,13 @@ float3 GetPunctualEmission(LightData lightData, float3 outgoingDir, float dist)
     float4 distances = float4(dist, Sq(dist), rcp(dist), -dist * dot(outgoingDir, lightData.forward));
     emission *= PunctualLightAttenuation(distances, lightData.rangeAttenuationScale, lightData.rangeAttenuationBias, lightData.angleScale, lightData.angleOffset);
 
-    // Cookie
+#ifndef LIGHT_EVALUATION_NO_COOKIE
     if (lightData.cookieMode != COOKIEMODE_NONE)
     {
         LightLoopContext context;
         emission *= EvaluateCookie_Punctual(context, lightData, -dist * outgoingDir);
     }
+#endif
 
     return emission;
 }
@@ -212,12 +216,13 @@ float3 GetDirectionalEmission(DirectionalLightData lightData, float3 outgoingVec
 {
     float3 emission = lightData.color;
 
-    // Cookie
+#ifndef LIGHT_EVALUATION_NO_COOKIE
     if (lightData.cookieMode != COOKIEMODE_NONE)
     {
         LightLoopContext context;
         emission *= EvaluateCookie_Directional(context, lightData, -outgoingVec);
     }
+#endif
 
     return emission;
 }
@@ -226,16 +231,17 @@ float3 GetAreaEmission(LightData lightData, float centerU, float centerV, float 
 {
     float3 emission = lightData.color;
 
-    // Cookie
+    // Range windowing (see LightLoop.cs to understand why it is written this way)
+    if (lightData.rangeAttenuationBias == 1.0)
+        emission *= SmoothDistanceWindowing(sqDist, rcp(Sq(lightData.range)), lightData.rangeAttenuationBias);
+
+#ifndef LIGHT_EVALUATION_NO_COOKIE
     if (lightData.cookieMode != COOKIEMODE_NONE)
     {
         float2 uv = float2(0.5 - centerU, 0.5 + centerV);
         emission *= SampleCookie2D(uv, lightData.cookieScaleOffset);
     }
-
-    // Range windowing (see LightLoop.cs to understand why it is written this way)
-    if (lightData.rangeAttenuationBias == 1.0)
-        emission *= SmoothDistanceWindowing(sqDist, rcp(Sq(lightData.range)), lightData.rangeAttenuationBias) ;
+#endif
 
     return emission;
 }
@@ -316,6 +322,10 @@ bool SampleLights(LightList lightList,
                 pdf = GetLocalLightWeight(lightList) * DELTA_PDF;
             }
         }
+
+#ifndef LIGHT_EVALUATION_NO_HEIGHT_FOG
+        ApplyFogAttenuation(position, outgoingDir, dist, value);
+#endif
     }
     else // Distant lights
     {
@@ -343,6 +353,10 @@ bool SampleLights(LightList lightList,
             return false;
 
         dist = FLT_INF;
+
+#ifndef LIGHT_EVALUATION_NO_HEIGHT_FOG
+        ApplyFogAttenuation(position, outgoingDir, value);
+#endif
     }
 
     return any(value);
@@ -380,7 +394,11 @@ void EvaluateLights(LightList lightList,
                 if (abs(centerU) < 0.5 && abs(centerV) < 0.5)
                 {
                     float t2 = Sq(t);
-                    value += GetAreaEmission(lightData, centerU, centerV, t2);
+                    float3 lightValue = GetAreaEmission(lightData, centerU, centerV, t2);
+#ifndef LIGHT_EVALUATION_NO_HEIGHT_FOG
+                    ApplyFogAttenuation(rayDescriptor.Origin, rayDescriptor.Direction, t, lightValue);
+#endif
+                    value += lightValue;
 
                     float lightArea = length(cross(lightData.size.x * lightData.right, lightData.size.y * lightData.up));
                     pdf += GetLocalLightWeight(lightList) * t2 / (lightArea * cosTheta);
@@ -403,10 +421,16 @@ void EvaluateLights(LightList lightList,
             float cosTheta = -dot(rayDescriptor.Direction, lightData.forward);
             if (cosTheta >= cosHalfAngle)
             {
+                float3 lightValue = GetDirectionalEmission(lightData, rayDescriptor.Direction);
+#ifndef LIGHT_EVALUATION_NO_HEIGHT_FOG
+                ApplyFogAttenuation(rayDescriptor.Origin, rayDescriptor.Direction, lightValue);
+#endif
                 float rcpPdf = TWO_PI * (1.0 - cosHalfAngle);
-                value += GetDirectionalEmission(lightData, rayDescriptor.Direction) / rcpPdf;
+                value += lightValue / rcpPdf;
                 pdf += GetDistantLightWeight(lightList) / rcpPdf;
             }
         }
     }
 }
+
+#endif // UNITY_PATH_TRACING_LIGHT_INCLUDED

@@ -63,6 +63,7 @@ namespace UnityEngine.Rendering.HighDefinition
         uint  m_CacheCameraHeight = 0;
 
         bool m_CameraSkyEnabled;
+        bool m_FogEnabled;
 
         void InitPathTracing()
         {
@@ -120,10 +121,10 @@ namespace UnityEngine.Rendering.HighDefinition
         private void CheckDirtiness(HDCamera hdCamera)
         {
             // Check camera clear mode dirtiness
-            bool cameraSkyEnabled = (hdCamera.clearColorMode == HDAdditionalCameraData.ClearColorMode.Sky);
-            if (cameraSkyEnabled != m_CameraSkyEnabled)
+            bool enabled = (hdCamera.clearColorMode == HDAdditionalCameraData.ClearColorMode.Sky);
+            if (enabled != m_CameraSkyEnabled)
             {
-                m_CameraSkyEnabled = cameraSkyEnabled;
+                m_CameraSkyEnabled = enabled;
                 m_CurrentIteration = 0;
                 return;
             }
@@ -140,6 +141,15 @@ namespace UnityEngine.Rendering.HighDefinition
             // Check camera matrix dirtiness
             if (hdCamera.mainViewConstants.nonJitteredViewProjMatrix != (hdCamera.mainViewConstants.prevViewProjMatrix))
             {
+                m_CurrentIteration = 0;
+                return;
+            }
+
+            // Check fog dirtiness
+            enabled = Fog.IsFogEnabled(hdCamera);
+            if (enabled != m_FogEnabled)
+            {
+                m_FogEnabled = enabled;
                 m_CurrentIteration = 0;
                 return;
             }
