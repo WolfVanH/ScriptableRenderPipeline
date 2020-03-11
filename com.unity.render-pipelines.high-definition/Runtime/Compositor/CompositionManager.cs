@@ -269,7 +269,6 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             var cameraData = m_OutputCamera.GetComponent<HDAdditionalCameraData>();
             if (cameraData && !cameraData.hasCustomRender)
             {
-                Debug.Log("Validation error: the camera did not had a custom render callback! Registering a new callback.");
                 cameraData.customRender += CustomRender;
             }
 
@@ -292,7 +291,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
         public void Init()
         {
-            if ( ValidateCompositionShader() || ValidateProfile() || ValidateMainCompositorCamera())
+            if ( ValidateCompositionShader() && ValidateProfile() && ValidateMainCompositorCamera())
             {
                 SetupCompositionMaterial();
 
