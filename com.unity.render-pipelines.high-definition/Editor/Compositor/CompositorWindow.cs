@@ -76,17 +76,17 @@ namespace UnityEditor.Rendering.HighDefinition.Compositor
             {
                 if (GUILayout.Button(new GUIContent("Remove compositor from scene")))
                 {
-                    if (compositor.m_OutputCamera)
+                    if (compositor.outputCamera)
                     {
-                        if(compositor.m_OutputCamera.name == CompositionUtils.k_DefaultCameraName)
+                        if(compositor.outputCamera.name == CompositionUtils.k_DefaultCameraName)
                         {
-                            var cameraData = compositor.m_OutputCamera.GetComponent<HDAdditionalCameraData>();
+                            var cameraData = compositor.outputCamera.GetComponent<HDAdditionalCameraData>();
                             if (cameraData != null)
                             {
                                 CoreUtils.Destroy(cameraData);
                             }
-                            CoreUtils.Destroy(compositor.m_OutputCamera.gameObject);
-                            CoreUtils.Destroy(compositor.m_OutputCamera);
+                            CoreUtils.Destroy(compositor.outputCamera.gameObject);
+                            CoreUtils.Destroy(compositor.outputCamera);
                         }
                     }
                     

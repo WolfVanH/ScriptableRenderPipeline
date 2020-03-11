@@ -45,7 +45,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
         }
 
         public string m_LayerName;
-        public bool m_Show = true;          // Used to toggle visibility of layers
+        
         public OutputTarget m_OutputTarget; // Specifies if this layer will be used in the compositor or a camera stack
         public bool m_ClearDepth = false;   // Specifies if the depth will be cleared when stacking this camera over the previous one (for overlays)
         public bool m_ClearAlpha = true;    // Specifies if the Alpha channel will be cleared when stacking this camera over the previous one (for overlays)
@@ -72,15 +72,15 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
         public LayerMask m_VolumeMask;
 
         // Layer filters
-        [HideInInspector]
-        public List<CompositionFilter> m_InputFilters = new List<CompositionFilter>();
+        [SerializeField]
+        List<CompositionFilter> m_InputFilters = new List<CompositionFilter>();
 
         // AOVs
-        [HideInInspector]
-        public MaterialSharedProperty m_AOVBitmask = 0;
+        [SerializeField]
+        MaterialSharedProperty m_AOVBitmask = 0;
 
-        [HideInInspector]
-        public Dictionary<string, int> m_AOVMap;
+        [SerializeField]
+        Dictionary<string, int> m_AOVMap;
 
         List<RTHandle> m_AOVHandles;
 
@@ -96,9 +96,6 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
         RTHandle m_AOVTmpRTHandle;
 
         [SerializeField]
-        Camera m_LayerCamera;
-
-        [SerializeField]
         bool m_ClearsBackGround = false;
 
         //static HashSet<Camera> s_CameraPool = new HashSet<Camera>();
@@ -112,6 +109,8 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 m_Show = value;
             }
         }
+
+        [SerializeField] bool m_Show = true;          // Used to toggle visibility of layers
 
         public float aspectRatio
         {
@@ -129,6 +128,8 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
         {
             get => m_LayerCamera;
         }
+
+        [SerializeField] Camera m_LayerCamera;
 
         private CompositorLayer()
         {

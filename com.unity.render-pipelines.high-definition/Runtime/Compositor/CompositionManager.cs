@@ -40,35 +40,17 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             RenderingAndPostProcessing
         }
 
-        [SerializeField]
-        Shader m_Shader;
+        [SerializeField] Material m_Material;
 
-        [HideInInspector, SerializeField]
-        Material m_Material;
+        [SerializeField] OutputDisplay m_OutputDisplay = OutputDisplay.Display1;
 
-        public Camera m_OutputCamera;
-
-        [SerializeField]
-        public OutputDisplay m_OutputDisplay = OutputDisplay.Display1;
-
-        [HideInInspector]
-        public List<CompositorLayer> m_InputLayers = new List<CompositorLayer>();
-
-        [HideInInspector]
-        public CompositionProfile m_CompositionProfile;
-
-        internal Matrix4x4 m_ViewProjMatrix; 
-        internal Matrix4x4 m_ViewProjMatrixFlipped;
-        internal GameObject m_CompositorGameObject;
-
-        internal bool m_ShaderPropertiesAreDirty = false;
+        [SerializeField] List<CompositorLayer> m_InputLayers = new List<CompositorLayer>();
 
         public AlphaChannelSupport alphaSupport
         {
             get => m_AlphaSupport;
         }
         internal AlphaChannelSupport m_AlphaSupport;
-        static private CompositionManager s_CompositorInstance;
 
         public bool enableOutput
         {
@@ -110,6 +92,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 return 0;
             }
         }
+
         public Shader shader
         {
             get => m_Shader;
@@ -118,6 +101,8 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 m_Shader = value;
             }
         }
+
+        [SerializeField] Shader m_Shader;
 
         public CompositionProfile profile
         {
@@ -129,6 +114,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
         }
 
+        [HideInInspector, SerializeField] CompositionProfile m_CompositionProfile;
         public Camera outputCamera
         {
             get => m_OutputCamera;
@@ -137,6 +123,8 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 m_OutputCamera = value;
             }
         }
+
+        [SerializeField] Camera m_OutputCamera;
 
         public float aspectRatio
         {
@@ -157,6 +145,14 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 m_ShaderPropertiesAreDirty = true;
             }
         }
+
+        internal bool m_ShaderPropertiesAreDirty = false;
+
+        internal Matrix4x4 m_ViewProjMatrix;
+        internal Matrix4x4 m_ViewProjMatrixFlipped;
+        internal GameObject m_CompositorGameObject;
+
+        static private CompositionManager s_CompositorInstance;
 
         #region Validation
         // Validates the rendering pipeline and fixes potential issues
