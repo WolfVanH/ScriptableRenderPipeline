@@ -107,18 +107,6 @@ namespace UnityEngine.Rendering.Universal
             get => 8;
         }
 
-        /// <summary>
-        /// Returns the current render pipeline asset for the current quality setting.
-        /// If no render pipeline asset is assigned in QualitySettings, then returns the one assigned in GraphicsSettings.
-        /// </summary>
-        public static UniversalRenderPipelineAsset asset
-        {
-            get
-            {
-                return GraphicsSettings.currentRenderPipeline as UniversalRenderPipelineAsset;
-            }
-        }
-
         public UniversalRenderPipeline(UniversalRenderPipelineAsset asset)
         {
             SetSupportedRenderingFeatures();
@@ -139,8 +127,16 @@ namespace UnityEngine.Rendering.Universal
 
             // Let engine know we have MSAA on for cases where we support MSAA backbuffer
             if (QualitySettings.antiAliasing != asset.msaaSampleCount)
+            {
                 QualitySettings.antiAliasing = asset.msaaSampleCount;
+#if ENABLE_VR && ENABLE_VR_MODULE
+                XR.XRDevice.UpdateEyeTextureMSAASetting();
+#endif
+            }
 
+#if ENABLE_VR && ENABLE_VR_MODULE
+            XRGraphics.eyeTextureResolutionScale = asset.renderScale;
+#endif
             // For compatibility reasons we also match old LightweightPipeline tag.
             Shader.globalRenderPipeline = "UniversalPipeline,LightweightPipeline";
 
@@ -154,6 +150,7 @@ namespace UnityEngine.Rendering.Universal
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
+
             Shader.globalRenderPipeline = "";
             SupportedRenderingFeatures.active = new SupportedRenderingFeatures();
             ShaderData.instance.Dispose();

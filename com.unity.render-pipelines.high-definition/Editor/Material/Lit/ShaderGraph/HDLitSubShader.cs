@@ -958,26 +958,6 @@ namespace UnityEditor.Rendering.HighDefinition
         };
         public int GetPreviewPassIndex() { return 0; }
 
-        private static List<string> GetInstancingOptionsFromMasterNode(AbstractMaterialNode iMasterNode)
-        {
-            List<string> instancingOption = new List<string>();
-
-            HDLitMasterNode masterNode = iMasterNode as HDLitMasterNode;
-
-            if (masterNode.dotsInstancing.isOn)
-            {
-                instancingOption.Add("#pragma instancing_options nolightprobe");
-                instancingOption.Add("#pragma instancing_options nolodfade");
-            }
-            else
-            {
-                instancingOption.Add("#pragma instancing_options renderinglayer");
-            }
-
-            return instancingOption;
-        }
-
-
         private static ActiveFields GetActiveFieldsFromMasterNode(AbstractMaterialNode iMasterNode, Pass pass)
         {
             var activeFields = new ActiveFields();
@@ -1221,7 +1201,7 @@ namespace UnityEditor.Rendering.HighDefinition
             return activeFields;
         }
 
-        private static bool GenerateShaderPassLit(HDLitMasterNode masterNode, Pass pass, GenerationMode mode, ShaderGenerator result, List<string> sourceAssetDependencyPaths)
+        private static bool GenerateShaderPassLit(HDLitMasterNode masterNode, Pass pass, GenerationMode mode, ShaderGenerator result, List<string> sourceAssetDependencyPaths, bool instancingFlag = true)
         {
             if (mode == GenerationMode.ForReals || pass.UseInPreview)
             {
@@ -1229,8 +1209,6 @@ namespace UnityEditor.Rendering.HighDefinition
 
                 // apply master node options to active fields
                 var activeFields = GetActiveFieldsFromMasterNode(masterNode, pass);
-
-                pass.ExtraInstancingOptions = GetInstancingOptionsFromMasterNode(masterNode);
 
                 // use standard shader pass generation
                 bool vertexActive = false;
@@ -1240,7 +1218,7 @@ namespace UnityEditor.Rendering.HighDefinition
                 {
                     vertexActive = true;
                 }
-                return HDSubShaderUtilities.GenerateShaderPass(masterNode, pass, mode, activeFields, result, sourceAssetDependencyPaths, vertexActive);
+                return HDSubShaderUtilities.GenerateShaderPass(masterNode, pass, mode, activeFields, result, sourceAssetDependencyPaths, vertexActive, instancingFlag: instancingFlag);
             }
             else
             {
@@ -1346,12 +1324,12 @@ namespace UnityEditor.Rendering.HighDefinition
                 subShader.Indent();
                 HDSubShaderUtilities.AddTags(subShader, HDRenderPipeline.k_ShaderTagName);
                 {
-                    GenerateShaderPassLit(masterNode, m_PassRaytracingIndirect, mode, subShader, sourceAssetDependencyPaths);
-                    GenerateShaderPassLit(masterNode, m_PassRaytracingVisibility, mode, subShader, sourceAssetDependencyPaths);
-                    GenerateShaderPassLit(masterNode, m_PassRaytracingForward, mode, subShader, sourceAssetDependencyPaths);
-                    GenerateShaderPassLit(masterNode, m_PassRaytracingGBuffer, mode, subShader, sourceAssetDependencyPaths);
-                    GenerateShaderPassLit(masterNode, m_PassRaytracingSubSurface, mode, subShader, sourceAssetDependencyPaths);
-                    GenerateShaderPassLit(masterNode, m_PassPathTracing, mode, subShader, sourceAssetDependencyPaths);
+                    GenerateShaderPassLit(masterNode, m_PassRaytracingIndirect, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
+                    GenerateShaderPassLit(masterNode, m_PassRaytracingVisibility, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
+                    GenerateShaderPassLit(masterNode, m_PassRaytracingForward, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
+                    GenerateShaderPassLit(masterNode, m_PassRaytracingGBuffer, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
+                    GenerateShaderPassLit(masterNode, m_PassRaytracingSubSurface, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
+                    GenerateShaderPassLit(masterNode, m_PassPathTracing, mode, subShader, sourceAssetDependencyPaths, instancingFlag: false);
                 }
                 subShader.Deindent();
                 subShader.AddShaderChunk("}", false);
