@@ -31,6 +31,7 @@ namespace UnityEditor.Rendering.HighDefinition.Compositor
         public SerializedProperty VolumeMask;
         public SerializedProperty AOVBitmask;
         public SerializedProperty InputFilters;
+        public SerializedProperty PositionInStack;
 
         public List<SerializedCompositionFilter> FilterList = new List<SerializedCompositionFilter>();
 
@@ -60,6 +61,7 @@ namespace UnityEditor.Rendering.HighDefinition.Compositor
             VolumeMask = root.FindPropertyRelative("m_VolumeMask");
             AOVBitmask = root.FindPropertyRelative("m_AOVBitmask");
             InputFilters = root.FindPropertyRelative("m_InputFilters");
+            PositionInStack = root.FindPropertyRelative("m_LayerPositionInStack");
 
             for (int index = 0; index < InputFilters.arraySize; index++)
             {

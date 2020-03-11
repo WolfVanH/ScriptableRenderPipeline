@@ -120,7 +120,7 @@ NavMeshSettings:
     tileSize: 256
     accuratePlacement: 0
     maxJobWorkers: 0
-    keepTiles: 0
+    preserveTilesOutsideBounds: 0
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
@@ -1323,14 +1323,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e46d2393531446428690b5a5f21645d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Shader: {fileID: -6465566751694194690, guid: fea4ff21702af224eb16a7989dfdbd8a,
-    type: 3}
   m_Material: {fileID: 457105371}
-  m_OutputCamera: {fileID: 1987531044}
   m_OutputDisplay: 0
   m_InputLayers:
   - m_LayerName: Layer0
-    m_Show: 1
     m_OutputTarget: 0
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1354,11 +1350,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: CameraStackL1
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: CameraStackL1
     m_OutputTarget: 1
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1382,11 +1382,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 1024
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: CameraStackL2
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: CameraStackL2
     m_OutputTarget: 1
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1410,11 +1414,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: CameraStackL3
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: CameraStackL3
     m_OutputTarget: 1
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1438,11 +1446,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 8192
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: Layer1
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: Layer1
     m_OutputTarget: 0
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1466,11 +1478,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: Sphere layer
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: Sphere layer
     m_OutputTarget: 1
     m_ClearDepth: 1
     m_ClearAlpha: 1
@@ -1494,11 +1510,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 4096
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: Logo
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: Logo
     m_OutputTarget: 0
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1522,11 +1542,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: logo (alpha)
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: logo (alpha)
     m_OutputTarget: 1
     m_ClearDepth: 1
     m_ClearAlpha: 0
@@ -1550,11 +1574,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: GreenScreen
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: GreenScreen
     m_OutputTarget: 0
     m_ClearDepth: 0
     m_ClearAlpha: 1
@@ -1578,11 +1606,15 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters: []
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
-  - m_LayerName: New Layer
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
     m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  - m_LayerName: New Layer
     m_OutputTarget: 1
     m_ClearDepth: 1
     m_ClearAlpha: 0
@@ -1606,6 +1638,7 @@ MonoBehaviour:
     m_VolumeMask:
       serializedVersion: 2
       m_Bits: 0
+    m_LayerPositionInStack: 0
     m_InputFilters:
     - m_Type: 0
       m_MaskColor: {r: 0.09431517, g: 1, b: 0, a: 0}
@@ -1614,9 +1647,16 @@ MonoBehaviour:
       m_SpillRemoval: 0
       m_AlphaMask: {fileID: 0}
     m_AOVBitmask: 0
-    m_ExpandLayer: 1
+    m_AOVRenderTargets: []
+    m_RenderTarget: {fileID: 0}
+    m_ClearsBackGround: 0
+    m_Show: 1
+    m_LayerCamera: {fileID: 0}
+  m_Shader: {fileID: -6465566751694194690, guid: fea4ff21702af224eb16a7989dfdbd8a,
+    type: 3}
   m_CompositionProfile: {fileID: 11400000, guid: ee50ee55419ae05409d452c285f7f70a,
     type: 2}
+  m_OutputCamera: {fileID: 1987531044}
 --- !u!4 &2062691841
 Transform:
   m_ObjectHideFlags: 1

@@ -498,7 +498,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
             if (m_CompositionProfile)
             {
-                m_CompositionProfile.UpdateLayers(Application.IsPlaying(gameObject));
+                m_CompositionProfile.UpdateLayers();
             }
         }
 
@@ -582,7 +582,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             {
                 if (layer.GetOutputTarget() != CompositorLayer.OutputTarget.CameraStack)  // stacked cameras are not exposed as compositor layers 
                 {
-                    m_Material.SetTexture(layer.m_LayerName, layer.GetRenderTarget(), RenderTextureSubElement.Color);
+                    m_Material.SetTexture(layer.name, layer.GetRenderTarget(), RenderTextureSubElement.Color);
                 }
                 layerIndex++;
             }

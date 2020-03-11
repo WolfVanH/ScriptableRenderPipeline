@@ -169,8 +169,12 @@ namespace UnityEditor.Rendering.HighDefinition.Compositor
             EditorGUI.PropertyField(rect, serializedProperties.ClearAlpha, TextUI.ClearAlpha);
             rect.y += 1.5f * CompositorStyle.k_Spacing;
 
-            DrawPropertyHelper(rect, TextUI.ClearMode, serializedProperties.OverrideClearMode, serializedProperties.ClearMode);
-            rect.y += CompositorStyle.k_Spacing;
+            // The clear mode should be visible / configurable only for the first layer in the stack. For the other layers we set a camera-stacking specific clear-mode .
+            if (serializedProperties.PositionInStack.intValue == 0)
+            {
+                DrawPropertyHelper(rect, TextUI.ClearMode, serializedProperties.OverrideClearMode, serializedProperties.ClearMode);
+                rect.y += CompositorStyle.k_Spacing;
+            }
 
             DrawPropertyHelper(rect, TextUI.AAMode, serializedProperties.OverrideAA, serializedProperties.AAMode);
             rect.y += CompositorStyle.k_Spacing;

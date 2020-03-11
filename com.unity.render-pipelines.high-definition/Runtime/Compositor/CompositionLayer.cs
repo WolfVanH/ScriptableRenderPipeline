@@ -43,33 +43,39 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             Half = 2,
             Quarter = 4
         }
+        public string name
+        {
+            get => m_LayerName;
+        }
+        [SerializeField] string m_LayerName;
 
-        public string m_LayerName;
-        
-        public OutputTarget m_OutputTarget; // Specifies if this layer will be used in the compositor or a camera stack
-        public bool m_ClearDepth = false;   // Specifies if the depth will be cleared when stacking this camera over the previous one (for overlays)
-        public bool m_ClearAlpha = true;    // Specifies if the Alpha channel will be cleared when stacking this camera over the previous one (for overlays)
-        public Renderer m_OutputRenderer = null; // Specifies the output surface/renderer
-        public LayerType m_Type;
-        public Camera m_Camera;             // The source camera for the layer (were we get the default properties). The actual rendering, with overridden properties is done by the m_LayerCamera
-        public VideoPlayer m_InputVideo;
-        public Texture m_InputTexture;
-        public BackgroundFitMode m_BackgroundFit;
-        public ResolutionScale m_ResolutionScale = ResolutionScale.Full;
-        public UIColorBufferFormat m_ColorBufferFormat = UIColorBufferFormat.R16G16B16A16;
+        [SerializeField] OutputTarget m_OutputTarget; // Specifies if this layer will be used in the compositor or a camera stack
+        [SerializeField] bool m_ClearDepth = false;   // Specifies if the depth will be cleared when stacking this camera over the previous one (for overlays)
+        [SerializeField] bool m_ClearAlpha = true;    // Specifies if the Alpha channel will be cleared when stacking this camera over the previous one (for overlays)
+        [SerializeField] Renderer m_OutputRenderer = null; // Specifies the output surface/renderer
+        [SerializeField] LayerType m_Type;
+        [SerializeField] Camera m_Camera;             // The source camera for the layer (were we get the default properties). The actual rendering, with overridden properties is done by the m_LayerCamera
+        [SerializeField] public VideoPlayer m_InputVideo;
+        [SerializeField] public Texture m_InputTexture;
+        [SerializeField] public BackgroundFitMode m_BackgroundFit;
+        [SerializeField] ResolutionScale m_ResolutionScale = ResolutionScale.Full;
+        [SerializeField] UIColorBufferFormat m_ColorBufferFormat = UIColorBufferFormat.R16G16B16A16;
 
         // Layer overrides
-        public bool m_OverrideAntialiasing = false;
-        public HDAdditionalCameraData.AntialiasingMode m_Antialiasing;
+        [SerializeField] bool m_OverrideAntialiasing = false;
+        [SerializeField] HDAdditionalCameraData.AntialiasingMode m_Antialiasing;
 
-        public bool m_OverrideClearMode = false;
-        public HDAdditionalCameraData.ClearColorMode m_ClearMode;
+        [SerializeField] bool m_OverrideClearMode = false;
+        [SerializeField] public HDAdditionalCameraData.ClearColorMode m_ClearMode;
 
-        public bool m_OverrideCullingMask = false;
-        public LayerMask m_CullingMask;
+        [SerializeField] bool m_OverrideCullingMask = false;
+        [SerializeField] LayerMask m_CullingMask;
 
-        public bool m_OverrideVolumeMask = false;
-        public LayerMask m_VolumeMask;
+        [SerializeField] bool m_OverrideVolumeMask = false;
+        [SerializeField] LayerMask m_VolumeMask;
+
+        [SerializeField]
+        int m_LayerPositionInStack = 0;
 
         // Layer filters
         [SerializeField]
@@ -216,7 +222,6 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 m_LayerName = layerID;
             }
 
-
             // Compositor output layers (that allocate the render targets) also need a reference camera, just to get the reference pixel width/height 
             // Note: Movie & image layers are rendered at the output resolution (and not the movie/image resolution). This is required to have post-processing effects like film grain at full res.
             if (m_Camera == null)
@@ -251,6 +256,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
             }
             m_ClearsBackGround = false;
+            m_LayerPositionInStack = 0; // will be set in SetupLayerCamera
 
             if (m_OutputTarget != OutputTarget.CameraStack && m_RenderTarget == null)
             {
@@ -457,7 +463,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
         }
 
-        public void UpdateOutputCamera(bool isPlaying)
+        public void UpdateOutputCamera()
         {
             if (m_LayerCamera == null)
             {
@@ -477,9 +483,9 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
         }
 
-        public void Update(bool isPlaying)
+        public void Update()
         {
-            UpdateOutputCamera(isPlaying);
+            UpdateOutputCamera();
             SetLayerMaskOverrides();
             SetAdditionalLayerData();
         }
@@ -555,7 +561,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
             m_InputFilters.Add(filter);
         }
-        public void SetupLayerCamera(CompositorLayer targetLayer, bool isFirstLayer = false)
+        public void SetupLayerCamera(CompositorLayer targetLayer, int layerPositionInStack)
         {
             if (!m_LayerCamera || (targetLayer == null))
             {
@@ -568,12 +574,14 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 return;
             }
 
+            m_LayerPositionInStack = layerPositionInStack;
+
             var cameraData = HDUtils.TryGetAdditionalCameraDataOrDefault(m_LayerCamera);
             m_LayerCamera.targetTexture = targetLayer.GetRenderTarget(false);
 
             if (targetLayer.m_AOVBitmask == 0)
             {
-                if (!isFirstLayer)
+                if (layerPositionInStack != 0)
                 {
                     // The next layer in the stack should clear with the texture of the previous layer: this will copy the content of the target RT to the RTHandle and preserve post process
                     cameraData.clearColorMode = HDAdditionalCameraData.ClearColorMode.None;

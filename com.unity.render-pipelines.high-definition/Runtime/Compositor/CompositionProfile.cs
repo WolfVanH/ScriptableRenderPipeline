@@ -150,7 +150,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             {
                 if (m_InputLayers[j].GetOutputTarget() != CompositorLayer.OutputTarget.CameraStack)
                 {
-                    int indx = propertyNames.FindIndex(x => x == m_InputLayers[j].m_LayerName);
+                    int indx = propertyNames.FindIndex(x => x == m_InputLayers[j].name);
                     if (indx < 0)
                     {
                         RemoveLayerAtIndex(j);
@@ -181,7 +181,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             // For textures, check if we already have this layer in the layer list. If not, add it.
             if (sp.m_Type == ShaderPropertyType.Texture)
             {
-                int indx = m_InputLayers.FindIndex(s => s.m_LayerName == sp.m_PropertyName);
+                int indx = m_InputLayers.FindIndex(s => s.name == sp.m_PropertyName);
                 if (indx < 0 && !hide)
                 {
                     Debug.Log($"Adding output layer from shader graph: {sp.m_PropertyName}");
@@ -208,7 +208,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
         public void SetLayerRenderTargets()
         {
-            bool isFirstLayerInSTack = true;
+            int layerPositionInStack = 0;
             CompositorLayer lastLayer = null;
             for (int i = 0; i < m_InputLayers.Count; ++i)
             {
@@ -219,18 +219,18 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
                 if (m_InputLayers[i].GetOutputTarget() == CompositorLayer.OutputTarget.CameraStack && i > 0)
                 {
-                    m_InputLayers[i].SetupLayerCamera(lastLayer, isFirstLayerInSTack);
+                    m_InputLayers[i].SetupLayerCamera(lastLayer, layerPositionInStack);
 
                     // Corner case: If the first layer in a camera stack was disabled, then it should still clear the color buffer
-                    if (m_InputLayers[i].enabled == false && isFirstLayerInSTack)
+                    if (m_InputLayers[i].enabled == false && layerPositionInStack == 0)
                     {
                         m_InputLayers[i].SetupClearColor();
                     }
-                    isFirstLayerInSTack = false;
+                    layerPositionInStack++;
                 }
                 else
                 {
-                    isFirstLayerInSTack = true;
+                    layerPositionInStack = 0;
                 }
             }
         }
@@ -246,11 +246,11 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
         }
 
-        public void UpdateLayers(bool isPLaying)
+        public void UpdateLayers()
         {
             foreach (var layer in m_InputLayers)
             {
-                layer.Update(isPLaying);
+                layer.Update();
             }
             SetLayerRenderTargets();
         }
