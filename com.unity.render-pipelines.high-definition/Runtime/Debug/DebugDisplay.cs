@@ -1247,9 +1247,10 @@ namespace UnityEngine.Rendering.HighDefinition
 
                     foreach (var volume in volumes)
                     {
+                        var profile = volume.HasInstantiatedProfile() ? volume.profile : volume.sharedProfile;
                         row.children.Add(new DebugUI.Value()
                         {
-                            displayName = volume.name + " (" + volume.profileRef.name + ")",
+                            displayName = volume.name + " (" + profile.name + ")",
                             getter = () => {
                                 var scope = volume.isGlobal ? "Global" : "Local";
                                 var weight = data.volumeDebugSettings.GetVolumeWeight(volume);
@@ -1271,7 +1272,10 @@ namespace UnityEngine.Rendering.HighDefinition
                         };
 
                         foreach (var volume in volumes)
-                            row.children.Add(makeWidget(volume.name + " (" + volume.profileRef.name + ")", data.volumeDebugSettings.GetParameter(volume, f)));
+                        {
+                            var profile = volume.HasInstantiatedProfile() ? volume.profile : volume.sharedProfile;
+                            row.children.Add(makeWidget(volume.name + " (" + volume.profile.name + ")", data.volumeDebugSettings.GetParameter(volume, f)));
+                        }
 
                         row.children.Add(makeWidget("Default Value", data.volumeDebugSettings.GetParameter(inst, f)));
                         table.children.Add(row);
