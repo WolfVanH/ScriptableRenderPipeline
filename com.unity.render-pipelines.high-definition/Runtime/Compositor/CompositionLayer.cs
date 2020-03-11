@@ -310,6 +310,14 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
                 }
             }
 
+            var compositor = CompositionManager.GetInstance();
+            if (m_OutputRenderer != null && Application.IsPlaying(compositor.gameObject))
+            {
+                MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+                propertyBlock.SetTexture("_BaseColorMap", m_RenderTarget);
+                m_OutputRenderer.SetPropertyBlock(propertyBlock);
+            }
+
             if (m_LayerCamera)
             {
                 m_LayerCamera.enabled = m_Show;
@@ -448,27 +456,14 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
             }
         }
 
-        public void UpdateOutputCameraAndTexture(bool isPlaying)
+        public void UpdateOutputCamera(bool isPlaying)
         {
-            var compositor = CompositionManager.GetInstance();
-
-            if (m_OutputRenderer != null)
-            {
-                m_OutputRenderer.enabled = m_Show || m_ClearsBackGround;
-                if (isPlaying)
-                {
-                    foreach (var material in m_OutputRenderer.materials)
-                    {
-                        material?.SetTexture("_BaseColorMap", m_RenderTarget);
-                    }
-                }
-            }
-
             if (m_LayerCamera == null)
             {
                 return;
             }
 
+            var compositor = CompositionManager.GetInstance();
             m_LayerCamera.enabled = (m_Show || m_ClearsBackGround) && compositor.enableOutput;
 
             // Refresh the camera data
@@ -483,7 +478,7 @@ namespace UnityEngine.Rendering.HighDefinition.Compositor
 
         public void Update(bool isPlaying)
         {
-            UpdateOutputCameraAndTexture(isPlaying);
+            UpdateOutputCamera(isPlaying);
             SetLayerMaskOverrides();
             SetAdditionalLayerData();
         }
