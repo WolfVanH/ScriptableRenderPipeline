@@ -129,9 +129,18 @@ namespace UnityEngine.Rendering.HighDefinition
             {
                 return VolumeManager.instance.baseComponentTypes
                     .Where(t => !t.IsDefined(typeof(VolumeComponentDeprecated), false))
-                    .OrderBy(t => t.Name)
+                    .OrderBy(t => ComponentDisplayName(t))
                     .ToList();
             }
+        }
+
+        /// <summary>List of Volume component types.</summary>
+        static public string ComponentDisplayName(Type component)
+        {
+            Attribute attrib = component.GetCustomAttribute(typeof(VolumeComponentMenu), false);
+            if (attrib != null)
+                return (attrib as VolumeComponentMenu).menu;
+            return component.Name;
         }
 
         /// <summary>List of HD Additional Camera data.</summary>

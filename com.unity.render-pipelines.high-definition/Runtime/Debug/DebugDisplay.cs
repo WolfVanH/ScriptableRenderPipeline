@@ -1121,7 +1121,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             foreach (var type in VolumeDebugSettings.componentTypes)
             {
-                componentNames.Add(new GUIContent() { text = type.Name });
+                componentNames.Add(new GUIContent() { text = VolumeDebugSettings.ComponentDisplayName(type) });
                 componentValues.Add(componentIndex++);
             }
 
@@ -1197,7 +1197,12 @@ namespace UnityEngine.Rendering.HighDefinition
                             };
                         }
 
+
                         var property = param.GetType().GetProperty("value");
+                        var toString = property.PropertyType.GetMethod("ToString", Type.EmptyTypes);
+                        if ((toString == null) || (toString.DeclaringType == typeof(object)) || (toString.DeclaringType == typeof(UnityEngine.Object)))
+                            return new DebugUI.Value() { displayName = name, getter = () => "Not supported" };
+
                         return new DebugUI.Value()
                         {
                             displayName = name,
