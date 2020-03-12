@@ -274,7 +274,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                         expandPreviewAction = DropdownMenuAction.Status.Normal;
                 }
 
-                if (selectedNode.CanToggleExpanded())
+                if (selectedNode.CanToggleNodeExpanded())
                 {
                     if (selectedNode.expanded)
                         minimizeAction = DropdownMenuAction.Status.Normal;
@@ -284,13 +284,13 @@ namespace UnityEditor.ShaderGraph.Drawing
             }
 
             // Create the menu options
-            evt.menu.AppendAction(collapsePortText, _ => SetNodeExpandedOnSelection(false), (a) => minimizeAction);
-            evt.menu.AppendAction(expandPortText, _ => SetNodeExpandedOnSelection(true), (a) => maximizeAction);
+            evt.menu.AppendAction(collapsePortText, _ => SetNodeExpandedForSelectedNodes(false), (a) => minimizeAction);
+            evt.menu.AppendAction(expandPortText, _ => SetNodeExpandedForSelectedNodes(true), (a) => maximizeAction);
 
             evt.menu.AppendSeparator("View/");
 
-            evt.menu.AppendAction(expandPreviewText, _ => SetPreviewExpandedOnSelection(true), (a) => expandPreviewAction);
-            evt.menu.AppendAction(collapsePreviewText, _ => SetPreviewExpandedOnSelection(false), (a) => collapsePreviewAction);
+            evt.menu.AppendAction(expandPreviewText, _ => SetPreviewExpandedForSelectedNodes(true), (a) => expandPreviewAction);
+            evt.menu.AppendAction(collapsePreviewText, _ => SetPreviewExpandedForSelectedNodes(false), (a) => collapsePreviewAction);
         }
 
         void ChangeCustomNodeColor(DropdownMenuAction menuAction)
@@ -378,12 +378,16 @@ namespace UnityEditor.ShaderGraph.Drawing
             }
         }
 
-        public void SetNodeExpandedOnSelection(bool state)
+        public void SetNodeExpandedForSelectedNodes(bool state, bool recordUndo = true)
         {
-            graph.owner.RegisterCompleteObjectUndo("Toggle Expansion");
+            if (recordUndo)
+            {
+                graph.owner.RegisterCompleteObjectUndo(state ? "Expand Nodes" : "Collapse Nodes");
+            }
+
             foreach (MaterialNodeView selectedNode in selection.Where(x => x is MaterialNodeView).Select(x => x as MaterialNodeView))
             {
-                if (selectedNode.CanToggleExpanded())
+                if (selectedNode.CanToggleNodeExpanded() && selectedNode.expanded != state)
                 {
                     selectedNode.expanded = state;
                     selectedNode.node.Dirty(ModificationScope.Topological);
@@ -391,9 +395,10 @@ namespace UnityEditor.ShaderGraph.Drawing
             }
         }
 
-        public void SetPreviewExpandedOnSelection(bool state)
+        public void SetPreviewExpandedForSelectedNodes(bool state)
         {
-            graph.owner.RegisterCompleteObjectUndo("Toggle Preview Visibility");
+            graph.owner.RegisterCompleteObjectUndo(state ? "Expand Nodes" : "Collapse Nodes");
+
             foreach (MaterialNodeView selectedNode in selection.Where(x => x is MaterialNodeView).Select(x => x as MaterialNodeView))
             {
                 selectedNode.node.previewExpanded = state;
@@ -425,6 +430,7 @@ namespace UnityEditor.ShaderGraph.Drawing
         void CollapsePreviews(DropdownMenuAction action)
         {
             graph.owner.RegisterCompleteObjectUndo("Collapse Previews");
+
             foreach (AbstractMaterialNode node in graph.GetNodes<AbstractMaterialNode>())
             {
                 node.previewExpanded = false;
@@ -434,6 +440,7 @@ namespace UnityEditor.ShaderGraph.Drawing
         void ExpandPreviews(DropdownMenuAction action)
         {
             graph.owner.RegisterCompleteObjectUndo("Expand Previews");
+
             foreach (AbstractMaterialNode node in graph.GetNodes<AbstractMaterialNode>())
             {
                 node.previewExpanded = true;
@@ -858,7 +865,7 @@ namespace UnityEditor.ShaderGraph.Drawing
                     case ShaderKeyword keyword:
                     {
                         // This could be from another graph, in which case we add a copy of the ShaderInput to this graph.
-                        if (graph.properties.FirstOrDefault(k => k.guid == keyword.guid) == null)
+                        if (graph.keywords.FirstOrDefault(k => k.guid == keyword.guid) == null)
                         {
                             var copy = (ShaderKeyword)keyword.Copy();
                             graph.SanitizeGraphInputName(copy);
