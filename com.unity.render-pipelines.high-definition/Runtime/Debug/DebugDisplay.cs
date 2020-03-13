@@ -1279,7 +1279,7 @@ namespace UnityEngine.Rendering.HighDefinition
                         foreach (var volume in volumes)
                         {
                             var profile = volume.HasInstantiatedProfile() ? volume.profile : volume.sharedProfile;
-                            row.children.Add(makeWidget(volume.name + " (" + volume.profile.name + ")", data.volumeDebugSettings.GetParameter(volume, f)));
+                            row.children.Add(makeWidget(volume.name + " (" + profile.name + ")", data.volumeDebugSettings.GetParameter(volume, f)));
                         }
 
                         row.children.Add(makeWidget("Default Value", data.volumeDebugSettings.GetParameter(inst, f)));
