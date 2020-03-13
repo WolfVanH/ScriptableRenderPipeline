@@ -210,7 +210,7 @@ void ClosestHit(inout PathIntersection pathIntersection : SV_RayPayload, Attribu
     #ifdef _REFRACTION_THIN
                     nextPathIntersection.value *= exp(-mtlData.bsdfData.absorptionCoefficient * REFRACTION_THIN_DISTANCE);
     #else
-                   // FIXME: maxDist might need some more tweaking
+                    // FIXME: maxDist might need some more tweaking
                     float maxDist = surfaceData.atDistance * 10.0;
                     nextPathIntersection.value *= exp(-mtlData.bsdfData.absorptionCoefficient * min(nextPathIntersection.t, maxDist));
     #endif
