@@ -432,7 +432,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed shader graph and ray tracing after the shader target PR.
 - Fixed a bug in semi-transparent shadows (object further than the light casting shadows)
 - Fix state enabled of default volume profile when in package.
-- Fixed removal of MeshRenderer and MeshFilter on adding Light component. 
+- Fixed removal of MeshRenderer and MeshFilter on adding Light component.
 - Fixed Ray Traced SubSurface Scattering not working with ray traced area lights
 - Fixed Ray Traced SubSurface Scattering not working in forward mode.
 - Fixed a bug in debug light volumes.
@@ -449,6 +449,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Fixed infinite reload loop while displaying Light's Shadow's Link Light Layer in Inspector of Prefab Asset.
 - Fixed the culling was not disposed error in build log.
 - Fixed the cookie atlas size and planar atlas size being too big after an upgrade of the HDRP asset.
+- Fixed transparent SSR for shader graph.
+- Fixed an issue with emissive light meshes not being in the RAS.
+- Fixed DXR player build
+- Fixed the HDRP asset migration code not being called after an upgrade of the package
+- Fixed draw renderers custom pass out of bound exception
+- Fixed the PBR shader rendering in deferred
+- Fixed some typos in debug menu (case 1224594)
 
 ### Changed
 - Color buffer pyramid is not allocated anymore if neither refraction nor distortion are enabled
@@ -538,6 +545,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Light dimmer can now get values higher than one and was renamed to multiplier in the UI.
 - Removed info box requesting volume component for Visual Environment and updated the documentation with the relevant information.
 - Improved light selection oracle for light sampling in path tracing.
+- Stripped ray tracing subsurface passes with ray tracing is not enabled.
+- Remove LOD cross fade code for ray tracing shaders
 
 ## [7.1.1] - 2019-09-05
 

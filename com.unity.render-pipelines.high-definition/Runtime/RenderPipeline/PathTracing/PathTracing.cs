@@ -138,6 +138,15 @@ namespace UnityEngine.Rendering.HighDefinition
                 return;
             }
 
+            // Check camera resolution dirtiness
+            if (hdCamera.actualWidth != m_CacheCameraWidth || hdCamera.actualHeight != m_CacheCameraHeight)
+            {
+                m_CacheCameraWidth = (uint) hdCamera.actualWidth;
+                m_CacheCameraHeight = (uint) hdCamera.actualHeight;
+                m_CurrentIteration = 0;
+                return;
+            }
+
             // Check camera matrix dirtiness
             if (hdCamera.mainViewConstants.nonJitteredViewProjMatrix != (hdCamera.mainViewConstants.prevViewProjMatrix))
             {

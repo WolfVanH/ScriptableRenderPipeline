@@ -298,7 +298,7 @@ bool SampleLights(LightList lightList,
             if (lightData.size.x > 0.0) // Stores the square radius
             {
                 float3x3 localFrame = GetLocalFrame(normalize(outgoingDir));
-                SampleCone(inputSample, sqrt(saturate(1.0 - lightData.size.x / sqDist)), outgoingDir, pdf); // computes rcpPdf
+                SampleCone(inputSample.xy, sqrt(saturate(1.0 - lightData.size.x / sqDist)), outgoingDir, pdf); // computes rcpPdf
 
                 outgoingDir = normalize(outgoingDir.x * localFrame[0] + outgoingDir.y * localFrame[1] + outgoingDir.z * localFrame[2]);
 
@@ -337,7 +337,7 @@ bool SampleLights(LightList lightList,
 
         if (lightData.angularDiameter > 0.0)
         {
-            SampleCone(inputSample, cos(lightData.angularDiameter * 0.5), outgoingDir, pdf); // computes rcpPdf
+            SampleCone(inputSample.xy, cos(lightData.angularDiameter * 0.5), outgoingDir, pdf); // computes rcpPdf
             value = GetDirectionalEmission(lightData, OutgoingVec) / pdf;
             pdf = GetDistantLightWeight(lightList) / pdf;
             outgoingDir = normalize(outgoingDir.x * normalize(lightData.right) + outgoingDir.y * normalize(lightData.up) - outgoingDir.z * lightData.forward);

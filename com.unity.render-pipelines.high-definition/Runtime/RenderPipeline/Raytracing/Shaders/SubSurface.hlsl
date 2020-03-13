@@ -94,7 +94,7 @@ void ScatteringWalk(float3 normalWS, float3 diffuseColor, float3 subSurfaceColor
         float currentSigmaT = sigmaT[channelIdx];
 
         // Evaluate the length of our steps
-        internalRayDesc.TMax = -log(1.0f - dstRndSample)/currentSigmaT;
+        internalRayDesc.TMax = -log(1.0f - dstRndSample) / currentSigmaT;
 
         if (walkIdx != 0)
         {
