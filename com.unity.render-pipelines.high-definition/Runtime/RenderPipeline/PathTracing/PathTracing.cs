@@ -223,7 +223,7 @@ namespace UnityEngine.Rendering.HighDefinition
 
             // Inject the ray generation data
 #if UNITY_HDRP_DXR_TESTS_DEFINE
-            cmd.SetGlobalFloat(HDShaderIDs._RaytracingNumSamples, 1);
+            cmd.SetGlobalFloat(HDShaderIDs._RaytracingNumSamples, Application.isPlaying ? 1 : m_PathTracingSettings.maximumSamples.value);
 #else
             cmd.SetGlobalFloat(HDShaderIDs._RaytracingNumSamples, m_PathTracingSettings.maximumSamples.value);
 #endif
